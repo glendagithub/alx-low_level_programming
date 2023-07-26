@@ -1,28 +1,100 @@
+#include <stdio.h>
 #include "variadic_functions.h"
 #include <stdarg.h>
-#include <stdio.h>
+
 /**
- * print_numbers - Entry Point
- * @separator: comma space
- * @n: elements to be printed
- * Return: void
+ * op_c - Print character .
+ * @form: name va_list
+ *
+ * Return: Nothing.
  */
-void print_numbers(const char *separator, const unsigned int n, ...)
+
+void op_c(va_list form)
 {
-	char *sep;
-	unsigned int i;
-	va_list list;
+	printf("%c", va_arg(form, int));
+}
+/**
+ * op_i - Print Integer
+ * @form: name va_list
+ *
+ * Return: Nothing.
+ */
 
-	if (separator == NULL || *separator == 0)
-		sep = "";
-	else
-		sep = (char *) separator;
-	va_start(list, n);
+void op_i(va_list form)
+{
+	printf("%i", va_arg(form, int));
+}
+/**
+ * op_f - print FLoat numbers
+ * @form: name of va_list
+ *
+ * Return: Nothing.
+ */
 
-	if (n > 0)
-		printf("%d", va_arg(list, int));
-	for (i = 1; i < n; i++)
-		printf("%s%d", sep, va_arg(list, int));
+void op_f(va_list form)
+{
+	printf("%f", va_arg(form, double));
+}
+/**
+ * op_s -print string
+ * @form: name va_list
+ *
+ * Return: Nothing.
+ */
+
+void op_s(va_list form)
+{
+	char *str;
+
+	str = va_arg(form, char *);
+	if (str == NULL)
+	{
+		printf("(nil)");
+		return;
+	}
+	printf("%s", str);
+}
+
+/**
+ * print_all - check the code for Holberton School students.
+ * @format: number of arguments in character format
+ *
+ * Return: Nothing.
+ */
+
+void print_all(const char * const format, ...)
+{
+
+	va_list all;
+	unsigned int i, j;
+	char *separator = "";
+
+	f ops[] = {
+		{"c", op_c},
+		{"i", op_i},
+		{"f", op_f},
+		{"s", op_s},
+	};
+
+	va_start(all, format);
+	i = 0;
+	while (format && format[i])
+	{
+		j = 0;
+		while (j < 4)
+		{
+			if (ops[j].op[0] == format[i])
+			{
+				printf("%s", separator);
+				separator = ", ";
+				ops[j].f(all);
+				break;
+			}
+			j++;
+		}
+		i++;
+	}
+
 	printf("\n");
-	va_end(list);
+	va_end(all);
 }
